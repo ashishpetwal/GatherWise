@@ -17,10 +17,11 @@ router.get('/list',fetchUser, async (req, res)=>{
 })
 
 router.get('/search',fetchUser, async (req, res)=>{
+    const {location, services} = req.body;
     try {
-        const events = await Events.find({location:req.body.location.toLowerCase()});
+        const events = await Events.find({location:location.toLowerCase(), services:services.toLowerCase()});
         if(events.length == 0){
-            console.log("empty");
+            // console.log("empty");
             return res.send("No Events to Display")
         }
         res.json(events);
@@ -32,10 +33,11 @@ router.get('/search',fetchUser, async (req, res)=>{
 
 router.post('/create', fetchUser, async (req, res) => {
 
-    const {title, description, startDate, endDate, location} = req.body;
+    const {title, description, startDate, endDate, services, location} = req.body;
+    const reqServices = services.map(str => str.toLowerCase());
     try {
         const events = new Events({
-            title, description, startDate, endDate, location:location.toLowerCase(), organizer:req.user.id 
+            title, description, startDate, endDate, services:reqServices, location:location.toLowerCase(), organizer:req.user.id 
         })
         const savedEvent = await events.save();
         res.send(savedEvent);

@@ -19,6 +19,11 @@ const eventSchema = new Schema({
         type: Date,
         required: true
     },
+    services:{
+        type: [String],
+        required: true,
+        default: undefined
+    },
     location: {
         type: String,
         required: true
