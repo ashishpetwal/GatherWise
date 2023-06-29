@@ -16,6 +16,7 @@ app.use(express.json());
 
 app.use('/api', require('./routes/auth'))
 app.use('/event', require('./routes/event'))
+app.use('/bid', require('./routes/bid'))
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

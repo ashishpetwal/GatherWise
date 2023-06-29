@@ -40,7 +40,7 @@ router.post('/create', fetchUser, async (req, res) => {
             title, description, startDate, endDate, services:reqServices, location:location.toLowerCase(), organizer:req.user.id 
         })
         const savedEvent = await events.save();
-        res.send(savedEvent);
+        res.status(200).send(savedEvent);
     } catch (error) {
         return res.status(500).send("Internal Server Error");
     }
