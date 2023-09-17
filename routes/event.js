@@ -16,10 +16,17 @@ router.get('/list',fetchUser, async (req, res)=>{
     }
 })
 
-router.get('/search',fetchUser, async (req, res)=>{
+router.post('/search',fetchUser, async (req, res)=>{
     const {location, services} = req.body;
     try {
-        const events = await Events.find({location:location.toLowerCase(), services:services.toLowerCase()});
+        const query = {};
+        if(location){
+            query.location = location.toLowerCase();
+        }
+        if(services){
+            query.services = services.toLowerCase();
+        }
+        const events = await Events.find(query);
         if(events.length == 0){
             // console.log("empty");
             return res.send("No Events to Display")

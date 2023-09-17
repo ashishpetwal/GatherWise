@@ -3,6 +3,11 @@ const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
 const bidSchema = new Schema ({
+    bidder:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     event:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Events',

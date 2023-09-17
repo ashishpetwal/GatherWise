@@ -1,5 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const cors = require('cors')
 const app = express()
 const port = 5000
 const {MONGO_URI} = require('./config/keys');
@@ -12,6 +13,7 @@ async function main() {
   await mongoose.connect(mongoURI);
 }
 
+app.use(cors());
 app.use(express.json());
 
 app.use('/api', require('./routes/auth'))

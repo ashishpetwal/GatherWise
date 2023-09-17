@@ -2,20 +2,44 @@
 
 import React, { useState } from 'react'
 import { Button, InputLabel, TextField, Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 type Props = {}
 
 const Signup = (props: Props) => {
 
-  const [type, setType] = useState('');
-  
-  const handleChange = (e: SelectChangeEvent) => {
-    setType(e.target.value);
+  const router = useRouter();
+
+  // const [type, setType] = useState('');
+  const [data, setData] = useState({ name: "", email: "", password: "", usertype:""});
+
+  const url = "http://localhost:5000/api/signup"
+
+  const handleTypeChange = (e: SelectChangeEvent) => {
+    setData({...data, [e.target.name]:e.target.value});
   }
 
-  const handleClick = () => {
-    console.log("clicked")
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  }
+
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+    const res = await response.json();
+    localStorage.setItem("token",res.secToken);
+    if (res.success) {
+      router.push('/home');
+    }
+    else {
+      router.push('/signup');
+    }
   }
 
   return (
@@ -26,20 +50,21 @@ const Signup = (props: Props) => {
             <h2 className='text-xl font-bold'>Hello, There👋</h2>
             <p>Enter your details to login...</p>
           </div>
-          <TextField type="text" id="standard-basic" label="Name" variant="standard" />
+          <TextField name='name' type="text" id="standard-basic" value={data.name} onChange={handleInputChange} label="Name" variant="standard" />
           <br />
-          <TextField type="email" id="standard-basic" label="Email" variant="standard" />
+          <TextField name='email' type="email" id="standard-basic" value={data.email} onChange={handleInputChange} label="Email" variant="standard" />
           <br />
-          <TextField type="password" id="standard-basic" label="Password" variant="standard" />
+          <TextField name='password' type="password" id="standard-basic" value={data.password} onChange={handleInputChange} label="Password" variant="standard" />
           <br />
           <FormControl fullWidth>
             <InputLabel id="simple-select-label">User Type</InputLabel>
             <Select
+              name='usertype'
               labelId="simple-select-label"
               id="simple-select"
-              value={type}
+              value={data.usertype}
               label="Age"
-              onChange={handleChange}
+              onChange={handleTypeChange}
             >
               <MenuItem value={"Organizer"}>Organizer</MenuItem>
               <MenuItem value={"Photographer"}>Photographer</MenuItem>
