@@ -9,7 +9,7 @@ const { JWT_SECRET } = require('../config/keys');
 
 router.get('/fetchuser',fetchUser, async (req, res) => {
     try {
-        const user = await User.findOne(req.user._id).select(['-password']);
+        const user = await User.findOne({_id:req.user.id}).select(['-password']);
         res.status(200).send(user);
     } catch (error) {
         res.status(500).send("Unexpected error occured");
