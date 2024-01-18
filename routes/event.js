@@ -3,13 +3,23 @@ const router = express.Router();
 const Events = require('../models/Events');
 const fetchUser = require('../middleware/fetchUser')
 
-router.get('/list',fetchUser, async (req, res)=>{
+router.get('/list/:user',fetchUser, async (req, res)=>{
+    const {user} = req.params;
     try {
-        const events = await Events.find({organizer:req.user.id});
-        if(events.length == 0){
-            return res.send("No Events to Display")
+        if(user === "Organizer"){
+            const events = await Events.find({organizer:req.user.id});
+            if(events.length == 0){
+                return res.send("No Events to Display")
+            }
+            res.json(events);
         }
-        res.json(events);
+        else{
+            const events = await Events.find();
+            if(events.length == 0){
+                return res.send("No Events to Display")
+            }
+            res.json(events);
+        }
     } catch (error) {
         console.log(error);
         return res.status(500).send("Internal Server Error")
