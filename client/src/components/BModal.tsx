@@ -19,23 +19,27 @@ const style = {
 interface Props {
     buttonRef: React.RefObject<HTMLButtonElement>;
     event: string
+    services: Array<string>
 }
 
 interface Bid {
     letter: string,
-    amount: number
+    amount: number,
+    service: string,
+    phone: number,
+    email: string
 }
 
-const BasicModal: React.FC<Props> = ({ buttonRef, event }) => {
+const BasicModal: React.FC<Props> = ({ buttonRef, event, services }) => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleClose = () => setOpen(false); 
 
-    const [bidInfo, setBidInfo] = React.useState<Bid>({ letter: "", amount: 0 })
+    const [bidInfo, setBidInfo] = React.useState<Bid>({ service: services[0] || "", letter: "", amount: 0, phone: 0, email: "" })
 
     const token = localStorage.getItem('token');
 
-    const submitBid = async (e:React.MouseEvent<HTMLButtonElement>) => {
+    const submitBid = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const response = await fetch(`http://localhost:5000/bid/addnew/${event}`, {
             method: "POST",
@@ -46,11 +50,11 @@ const BasicModal: React.FC<Props> = ({ buttonRef, event }) => {
             body: JSON.stringify(bidInfo)
         });
         const bid = await response.json();
-        console.log(bid);
         handleClose();
+        setBidInfo({ service: services[0] || "", letter: "", amount: 0, phone: 0, email: "" })
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement>) => {
         setBidInfo({ ...bidInfo, [e.target.name]: e.target.value });
     }
 
@@ -71,6 +75,26 @@ const BasicModal: React.FC<Props> = ({ buttonRef, event }) => {
                     <div>
                         <label htmlFor="small-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bid Price</label>
                         <input type='number' id="small-input" name='amount' value={bidInfo.amount} onChange={handleChange} placeholder='Enter Price in ₹₹₹...' className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                    </div>
+
+                    <div className='py-4'>
+                        <label htmlFor="service">Services: </label>
+
+                        <select name="service" id="service" value={bidInfo.service} onChange={handleChange}>
+                            {services.map((e) => {
+                                return <option value={e}>{e.toUpperCase()}</option>
+                            })}
+                        </select>
+                    </div>
+
+                    <div className='py-4'>
+                        <label htmlFor="small-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mobile</label>
+                        <input type='phone' id="small-input" name='phone' value={bidInfo.phone} onChange={handleChange} placeholder='Enter Price in ₹₹₹...' className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                    </div>
+
+                    <div className='py-4'>
+                        <label htmlFor="small-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                        <input type='email' id="small-input" name='email' value={bidInfo.email} onChange={handleChange} placeholder='Enter Email' className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                     </div>
 
                     <div className='mt-4'><Button onClick={submitBid}>Submit</Button></div>

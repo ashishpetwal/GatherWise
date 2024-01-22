@@ -38,7 +38,6 @@ router.post('/search',fetchUser, async (req, res)=>{
         }
         const events = await Events.find(query);
         if(events.length == 0){
-            // console.log("empty");
             return res.send("No Events to Display")
         }
         res.json(events);
